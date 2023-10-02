@@ -1,0 +1,27 @@
+.th {
+    padding: 0;
+  }
+  
+  .control {
+    width: 100%;
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  
+    @mixin hover {
+      background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    }
+  }
+  
+  .icon {
+    width: rem(21px);
+    height: rem(21px);
+    border-radius: rem(21px);
+  }
+
+  .textcontainer {
+    height: 100%;
+    width: 100%; /* 設定固定寬度 */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; /* 可選 */
+    word-wrap: break-word;
+  }
