@@ -37,6 +37,7 @@
     "dayjs": "^1.11.10",
     "embla-carousel-react": "^7.1.0",
     "install": "^0.13.0",
+    "moment": "^2.29.4",
     "next": "latest",
     "npm": "^10.1.0",
     "react": "latest",

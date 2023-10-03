@@ -1,16 +1,15 @@
-"use client"
+'use client';
 
 import './globals.css';
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@mantine/core/styles.css';
 import { MantineProvider, createTheme } from '@mantine/core';
-import { HeaderMegaMenu } from '@/components/header/header';
+import { HeaderMegaMenu } from '@/components/layout/header/header';
 import '@mantine/tiptap/styles.css';
+import '@mantine/notifications/styles.css';
+import { Notifications } from '@mantine/notifications';
 
 const inter = Inter({ subsets: ['latin'] });
-
-
 
 const theme = createTheme({
   colors: {
@@ -39,7 +38,9 @@ export default function RootLayout({
       <body className={inter.className}>
         {' '}
         <MantineProvider theme={theme}>
-        <HeaderMegaMenu />{children}</MantineProvider>
+          <HeaderMegaMenu /> <Notifications />
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );

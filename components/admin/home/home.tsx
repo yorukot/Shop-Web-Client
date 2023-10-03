@@ -7,10 +7,14 @@ import {
   Group,
   Space,
   Text,
+  ThemeIcon,
 } from '@mantine/core';
 import classes from './StatsGroup.module.css';
 import Link from 'next/link';
-
+import { BiCategoryAlt } from 'react-icons/bi';
+import { IoIosPaper } from 'react-icons/io' 
+import { BsFillBasketFill } from 'react-icons/bs' 
+import { FaUserFriends } from 'react-icons/fa'
 const data = [
   {
     title: '目前總訂單數量',
@@ -44,11 +48,11 @@ export function AdminHomePage() {
       <Grid>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" mt="md" mb="xs">
-              <Text fw={500}>訂單管理</Text>
-              <Badge color="pink" variant="light">
-                尚有未處理完成的訂單
-              </Badge>
+            <Group mt="md" mb="xs">
+              <ThemeIcon variant="light" size="xl">
+                <IoIosPaper style={{ width: '70%', height: '70%' }} />
+              </ThemeIcon>
+              <Text fw={800}>訂單管理</Text>
             </Group>
             <Button variant="light" color="blue" fullWidth mt="md" radius="md">
               前往訂單管理頁面
@@ -58,11 +62,11 @@ export function AdminHomePage() {
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           {' '}
           <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" mt="md" mb="xs">
-              <Text fw={500}>商品管理</Text>
-              <Badge color="pink" variant="light">
-                目前商品數量:xx
-              </Badge>
+            <Group mt="md" mb="xs">
+              <ThemeIcon variant="light" size="xl">
+                <BsFillBasketFill style={{ width: '70%', height: '70%' }} />
+              </ThemeIcon>
+              <Text fw={800}>商品管理</Text>
             </Group>
             <Anchor href="/admin/products" underline="never">
               <Button
@@ -80,8 +84,11 @@ export function AdminHomePage() {
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           {' '}
           <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" mt="md" mb="xs">
-              <Text fw={500}>用戶管理</Text>
+            <Group mt="md" mb="xs">
+              <ThemeIcon variant="light" size="xl">
+                <FaUserFriends style={{ width: '70%', height: '70%' }} />
+              </ThemeIcon>
+              <Text fw={800}>用戶管理</Text>
             </Group>
             <Button variant="light" color="blue" fullWidth mt="md" radius="md">
               前往用戶管理頁面
@@ -91,12 +98,23 @@ export function AdminHomePage() {
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           {' '}
           <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" mt="md" mb="xs">
-              <Text fw={500}>類別管理</Text>
+            <Group mt="md" mb="xs">
+              <ThemeIcon variant="light" size="xl">
+                <BiCategoryAlt style={{ width: '70%', height: '70%' }} />
+              </ThemeIcon>
+              <Text fw={800}>類別管理</Text>
             </Group>
-            <Button variant="light" color="blue" fullWidth mt="md" radius="md">
-              前往類別管理頁面
-            </Button>
+            <Anchor href="/admin/category" underline="never">
+              <Button
+                variant="light"
+                color="blue"
+                fullWidth
+                mt="md"
+                radius="md"
+              >
+                前往類別管理頁面
+              </Button>
+            </Anchor>
           </Card>
         </Grid.Col>
       </Grid>{' '}

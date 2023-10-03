@@ -1,6 +1,6 @@
 'use client';
 
-import { HeaderMegaMenu } from '@/components/header/header';
+import { HeaderMegaMenu } from '@/components/layout/header/header';
 import Image from 'next/image';
 import {
   Card,

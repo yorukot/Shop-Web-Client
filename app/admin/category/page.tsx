@@ -12,12 +12,13 @@ import {
 import { AdminHomePage } from '@/components/admin/home/home';
 import { HtmlEditor } from '@/components/admin/products/HtmlEditor';
 import { ProductsCreate } from '@/components/admin/products/productsCreate/productsCreate';
+import { CategoryListPage } from '@/components/admin/category/cetagoryList/cetagoryList';
 
 export default function Home() {
   return (
     <>
       <Container my="md">
-        <ProductsCreate></ProductsCreate>
+        <CategoryListPage></CategoryListPage>
       </Container>
     </>
   );
