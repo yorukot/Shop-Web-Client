@@ -8,6 +8,7 @@ import {
   Select,
   Button,
   Text,
+  Alert,
 } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 import { HtmlEditor } from '../HtmlEditor';
@@ -31,6 +32,7 @@ import UpdateProducts from '@/functions/Put/UpdateProducts';
 import { FaSave } from 'react-icons/fa';
 import { notifications } from '@mantine/notifications';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
+import { FcInfo } from 'react-icons/fc';
 
 export function ProductsEdit({
   id,
@@ -204,6 +206,14 @@ export function ProductsEdit({
               />
             </Grid.Col>
           </Grid>
+          <Alert
+            variant="outline"
+            color="yellow"
+            title="注意"
+            icon={<FcInfo></FcInfo>}
+          >
+            圖片建議採用正方形 否則可能會被裁切
+          </Alert>
           <Grid>
             <Grid.Col span={{ xs: 12, sm: 6, lg: 3 }}>
               <TextInput

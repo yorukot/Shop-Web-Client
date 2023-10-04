@@ -36,9 +36,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {' '}
         <MantineProvider theme={theme}>
-          <HeaderMegaMenu /> <Notifications />
+            <HeaderMegaMenu />
+          <Notifications />
           {children}
         </MantineProvider>
       </body>

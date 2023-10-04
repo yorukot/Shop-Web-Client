@@ -1,8 +1,18 @@
 .header {
     height: rem(60px);
     padding-left: var(--mantine-spacing-md);
+    padding-top: rem(14px);
     padding-right: var(--mantine-spacing-md);
     border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.5); /* 白色背景，可以根据需要调整透明度 */
+  
+    /* 添加模糊效果 */
+    backdrop-filter: blur(10px); /* 根据需要调整模糊半径 */
   }
   
   .link {
@@ -21,9 +31,6 @@
       width: 100%;
     }
   
-    @mixin hover {
-      background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
-    }
   }
   
   .subLink {
