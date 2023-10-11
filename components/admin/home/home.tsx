@@ -90,9 +90,11 @@ export function AdminHomePage() {
               </ThemeIcon>
               <Text fw={800}>用戶管理</Text>
             </Group>
+            <Anchor href="/admin/user" underline="never">
             <Button variant="light" color="blue" fullWidth mt="md" radius="md">
               前往用戶管理頁面
             </Button>
+            </Anchor>
           </Card>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>

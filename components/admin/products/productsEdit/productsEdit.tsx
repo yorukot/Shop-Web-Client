@@ -7,6 +7,7 @@ import {
   NumberInput,
   Select,
   Button,
+  rem,
   Text,
   Alert,
 } from '@mantine/core';
@@ -33,6 +34,7 @@ import { FaSave } from 'react-icons/fa';
 import { notifications } from '@mantine/notifications';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
 import { FcInfo } from 'react-icons/fc';
+import { TbError404 } from 'react-icons/tb';
 
 export function ProductsEdit({
   id,
@@ -115,6 +117,36 @@ export function ProductsEdit({
       Number(Transport),
       productcategory
     );
+    if (response.status === 422)
+      return notifications.show({
+        color: 'red',
+        title: '錯誤!',
+        message: '你輸入的資料有誤，請確保所有欄位皆已經填寫',
+        icon: <TbError404 style={{ width: rem(18), height: rem(18) }} />,
+      });
+    if (response.status === 400)
+      return notifications.show({
+        color: 'red',
+        title: '錯誤!',
+        message: '這個資料在你編輯的過程中疑似被人刪除了',
+        icon: <TbError404 style={{ width: rem(18), height: rem(18) }} />,
+      });
+    if (response.status !== 201)
+      return notifications.show({
+        color: 'red',
+        title: '錯誤!',
+        message: '出現了未知的錯誤，請稍後再試',
+        icon: <TbError404 style={{ width: rem(18), height: rem(18) }} />,
+      });
+    if (response.status === 201)
+      notifications.show({
+        color: 'teal',
+        title: '資料成功儲存',
+        message: '該通知會在2秒鐘之後自動清除!',
+        icon: <BsFillCheckCircleFill />,
+        loading: false,
+        autoClose: 2000,
+      });
   }
 
   useEffect(() => {
@@ -354,14 +386,6 @@ export function ProductsEdit({
             leftSection={<FaSave size={14} />}
             onClick={() => {
               UpdateProductsFunction();
-              const id = notifications.show({
-                color: 'teal',
-                title: '資料成功儲存',
-                message: '該通知會在2秒鐘之後自動清除!',
-                icon: <BsFillCheckCircleFill />,
-                loading: false,
-                autoClose: 2000,
-              });
             }}
           >
             儲存設定

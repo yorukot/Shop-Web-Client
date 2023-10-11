@@ -51,3 +51,15 @@
     padding-bottom: var(--mantine-spacing-xl);
     border-top: rem(1px) solid light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
   }
+
+  .numberInput {
+    width: rem(10px);
+  }
+
+  .footer {
+    background-color: #fff; /* 可根据需要更改底部背景颜色 */
+  }
+  
+  .ScrollAreaStyle {
+    height: (100% - rem(60px));
+  }

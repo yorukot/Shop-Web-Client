@@ -22,9 +22,16 @@ import {
   ActionIcon,
   Menu,
   Container,
+  Flex,
+  Space,
+  NumberInput,
+  NumberInputHandlers,
+  Textarea,
+  Skeleton,
+  Loader,
 } from '@mantine/core';
 import { MantineLogo } from '@mantine/ds';
-import { useDisclosure } from '@mantine/hooks';
+import { useDebouncedState, useDisclosure } from '@mantine/hooks';
 import {
   IconNotification,
   IconCode,
@@ -35,7 +42,7 @@ import {
   IconChevronDown,
 } from '@tabler/icons-react';
 import classes from './HeaderMegaMenu.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import getCheckpressioms from '@/functions/Get/checkperssiom';
 import { API_URL, WEBSITE_URL } from '@/lib/config';
 import Link from 'next/link';
@@ -46,6 +53,12 @@ import {
   MdFormatListBulleted,
   MdOutlineSettings,
 } from 'react-icons/md';
+import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
+import GetUserCart from '@/functions/Get/GetUserCart';
+import EditCartItemAmount from '@/functions/Put/EditCartItemAmount';
+import getProducts from '@/functions/Get/GetProducts';
+import { BiTrash } from 'react-icons/bi';
+import DeleteCart from '@/functions/Delete/DeleteCart';
 const mockdata = [
   {
     icon: IconCode,
@@ -79,60 +92,264 @@ const mockdata = [
   },
 ];
 
+function CartProducts({ data, reload }: { data: any; reload: any }) {
+  const handlersRef = useRef<NumberInputHandlers>(null);
+  const [value, setValue] = useState<any>();
+
+  async function EditCartItemAmountFunction() {
+    await EditCartItemAmount(data.id, value);
+  }
+
+  useEffect(() => {
+    console.log(value)
+    if (value) EditCartItemAmountFunction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return (
+    <>
+      <Flex justify="flex-start" align="center" direction="row" gap="md">
+        <Avatar
+          variant="outline"
+          radius="xs"
+          size="xl"
+          src={data.product_image}
+        />
+        <Flex
+          gap="xs"
+          justify="flex-start"
+          align="flex-start"
+          direction="column"
+        >
+          <Text size="md" fw={700} lineClamp={2}>
+            {data.name}
+          </Text>
+          <Text size="xs" fw={700} lineClamp={1}>
+            {data.product_options ? '選項:' + data.product_options : ''}
+          </Text>
+          <Group justify="space-between" gap="xs" w={'100%'}>
+            <div style={{ width: '140px' }}>
+              <Flex
+                gap="xs"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+              >
+                <NumberInput
+                  classNames={{ label: classes.numberInput }}
+                  allowNegative={false}
+                  max={data.remaining}
+                  min={1}
+                  width="50px"
+                  allowDecimal={false}
+                  defaultValue={data.amount}
+                  handlersRef={handlersRef}
+                  onChange={setValue}
+                  leftSection={
+                    <ActionIcon
+                      variant="transparent"
+                      onClick={() => {
+                        handlersRef.current?.decrement();
+                      }}
+                    >
+                      <AiOutlineMinus></AiOutlineMinus>
+                    </ActionIcon>
+                  }
+                  rightSection={
+                    <ActionIcon
+                      variant="transparent"
+                      onClick={() => {
+                        handlersRef.current?.increment();
+                      }}
+                    >
+                      <AiOutlinePlus></AiOutlinePlus>
+                    </ActionIcon>
+                  }
+                />
+                <ActionIcon
+                  variant="transparent"
+                  c={'red'}
+                  size="lg"
+                  onClick={() => {
+                    reload(data.id);
+                    DeleteCart(data.id);
+                  }}
+                >
+                  <BiTrash c={'red'} size={20}></BiTrash>
+                </ActionIcon>
+              </Flex>
+            </div>
+            <Text size="md" fw={700} c="#EE4D2D">
+              ${data.price * (value ? value : data.amount)}
+            </Text>
+          </Group>
+        </Flex>
+      </Flex>
+      <Space h="xs" />
+      <Divider />
+    </>
+  );
+}
+
+function CartDrawer({
+  CartDrawerStatus,
+  closeCart,
+}: {
+  CartDrawerStatus: any;
+  closeCart: any;
+}) {
+  const [CartData, setCartData] = useState<any>([]);
+  const [Loading, setLoading] = useState<any>([]);
+  const [pageHeight, setPageHeight] = useState(0);
+  const [Reload, setReload] = useState();
+
+  async function fetchCartDataFunction() {
+    const response = await GetUserCart();
+    setCartData(response.data.data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    const updatePageHeight = () => {
+      setPageHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', updatePageHeight);
+    updatePageHeight();
+    return () => {
+      window.removeEventListener('resize', updatePageHeight);
+    };
+  }, []);
+  useEffect(() => {
+    fetchCartDataFunction();
+  }, [Reload]);
+  useEffect(() => {
+    setLoading(true);
+    fetchCartDataFunction();
+  }, [CartDrawerStatus]);
+  return (
+    <Drawer
+      opened={CartDrawerStatus}
+      onClose={closeCart}
+      style={{ position: 'relative' }}
+      title={
+        <Text fw={700} size="xl">
+          購物車
+        </Text>
+      }
+      position="right"
+      padding="md"
+      zIndex={1000000}
+    >
+      <ScrollArea h={pageHeight - 170} offsetScrollbars>
+        <Divider />
+        <Space h="xs" />
+        {!Loading ? (
+          CartData?.map((data: any) => (
+            <CartProducts data={data} key={data.id} reload={setReload} />
+          ))
+        ) : (
+          <Flex justify="center" align="center">
+            <Loader />
+          </Flex>
+        )}
+        <Space h="xs" />
+        <Textarea
+          label={<Text fw={700}>訂單備註</Text>}
+          placeholder="輸入您想備註的事情"
+          autosize
+          minRows={2}
+          maxRows={4}
+        />
+      </ScrollArea>
+      <Space h="xs" />
+      <Group justify="space-between">
+        <Text fw={700}>總共價格:</Text>
+        <Text fw={700} c={"#EE4D2D"} size='xl'>${!Loading ? (
+          CartData?.reduce((accumulator:any, currentValue:any) => {
+            return accumulator + (currentValue.price * currentValue.amount);
+          }, 0)
+        ) : (
+          <Flex justify="center" align="center">
+            <Loader />
+          </Flex>
+        )}</Text>
+      </Group>
+      <Space h="xs" />
+      <Button fullWidth radius="xs" variant="outline">
+        前往結帳
+      </Button>
+    </Drawer>
+  );
+}
+
 function AvartaOrLogin({ PressiomsData }: { PressiomsData: any }) {
+  const [CartDrawerStatus, { toggle: openCart, close: closeCart }] =
+    useDisclosure(false);
   return (
     <>
       {PressiomsData?.sub ? (
-        <Group>
-          <Menu shadow="md" width={200}>
-            <Menu.Target>
-              <ActionIcon variant="transparent">
-                <Avatar src={PressiomsData?.avatar} />
-              </ActionIcon>
-            </Menu.Target>
+        <>
+          <CartDrawer
+            CartDrawerStatus={CartDrawerStatus}
+            closeCart={closeCart}
+          />
+          <Group>
+            <Menu shadow="md" width={200}>
+              <Menu.Target>
+                <ActionIcon variant="transparent">
+                  <Avatar src={PressiomsData?.avatar} />
+                </ActionIcon>
+              </Menu.Target>
 
-            <Menu.Dropdown>
-              <Menu.Label></Menu.Label>
-              <Menu.Item
-                leftSection={
-                  <MdFormatListBulleted
-                    style={{ width: rem(14), height: rem(14) }}
-                  />
-                }
-              >
-                購買紀錄
-              </Menu.Item>
-              <Anchor href={WEBSITE_URL + '/admin'} underline="never">
+              <Menu.Dropdown>
+                <Menu.Label></Menu.Label>
                 <Menu.Item
-                  color="orange"
                   leftSection={
-                    <MdOutlineSettings
+                    <MdFormatListBulleted
                       style={{ width: rem(14), height: rem(14) }}
                     />
                   }
                 >
-                  管理員後台
+                  購買紀錄
                 </Menu.Item>
-              </Anchor>
-              <Menu.Divider />
-              <Menu.Item
-                color="red"
-                leftSection={
-                  <MdExitToApp style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                登出
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-          <ActionIcon variant="transparent">
-            <PiShoppingCartSimple
-              color="#000000"
-              style={{ width: '100%', height: '100%' }}
-              stroke={1.5}
-            />
-          </ActionIcon>
-        </Group>
+                <Anchor href={WEBSITE_URL + '/admin'} underline="never">
+                  <Menu.Item
+                    color="orange"
+                    leftSection={
+                      <MdOutlineSettings
+                        style={{ width: rem(14), height: rem(14) }}
+                      />
+                    }
+                  >
+                    管理員後台
+                  </Menu.Item>
+                </Anchor>
+                <Menu.Divider />
+                <Link href={API_URL + '/oauth/logout'}>
+                  <Menu.Item
+                    color="red"
+                    leftSection={
+                      <MdExitToApp
+                        style={{ width: rem(14), height: rem(14) }}
+                      />
+                    }
+                  >
+                    登出
+                  </Menu.Item>
+                </Link>
+              </Menu.Dropdown>
+            </Menu>
+            <ActionIcon
+              variant="transparent"
+              onClick={CartDrawerStatus ? closeCart : openCart}
+            >
+              <PiShoppingCartSimple
+                color="#000000"
+                style={{ width: '100%', height: '100%' }}
+                stroke={1.5}
+              />
+            </ActionIcon>
+          </Group>
+        </>
       ) : (
         <Link href={API_URL + '/oauth/login/google'}>
           <Button
@@ -150,6 +367,7 @@ function AvartaOrLogin({ PressiomsData }: { PressiomsData: any }) {
 
 export function HeaderMegaMenu() {
   const [PressiomsData, setPressiomsData] = useState<any>();
+
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   useEffect(() => {
@@ -162,7 +380,7 @@ export function HeaderMegaMenu() {
   }, []);
   return (
     <Box pb={60}>
-        <header className={classes.header }>
+      <header className={classes.header}>
         <Container size="xl">
           <Group justify="space-between" h="100%">
             <MantineLogo size={30} />
@@ -195,37 +413,37 @@ export function HeaderMegaMenu() {
               />
             </Group>
           </Group>
-          </Container>
-        </header>
+        </Container>
+      </header>
 
-        <Drawer
-          opened={drawerOpened}
-          onClose={closeDrawer}
-          size="100%"
-          padding="md"
-          title="Navigation"
-          hiddenFrom="sm"
-          zIndex={1000000}
-        >
-          <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-            <a href="#" className={classes.link}>
-              Home
-            </a>
-            <a href="#" className={classes.link}>
-              Features
-            </a>
-            <a href="#" className={classes.link}>
-              Learn
-            </a>
-            <a href="#" className={classes.link}>
-              Academy
-            </a>
-            <Group justify="center" grow pb="xl" px="md">
-              <Button variant="default">Log in</Button>
-              <Button>Sign up</Button>
-            </Group>
-          </ScrollArea>
-        </Drawer>
+      <Drawer
+        opened={drawerOpened}
+        onClose={closeDrawer}
+        size="100%"
+        padding="md"
+        title="Navigation"
+        hiddenFrom="sm"
+        zIndex={1000000}
+      >
+        <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
+          <a href="#" className={classes.link}>
+            Home
+          </a>
+          <a href="#" className={classes.link}>
+            Features
+          </a>
+          <a href="#" className={classes.link}>
+            Learn
+          </a>
+          <a href="#" className={classes.link}>
+            Academy
+          </a>
+          <Group justify="center" grow pb="xl" px="md">
+            <Button variant="default">Log in</Button>
+            <Button>Sign up</Button>
+          </Group>
+        </ScrollArea>
+      </Drawer>
     </Box>
   );
 }
