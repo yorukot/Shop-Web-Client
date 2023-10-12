@@ -59,6 +59,10 @@ import EditCartItemAmount from '@/functions/Put/EditCartItemAmount';
 import getProducts from '@/functions/Get/GetProducts';
 import { BiTrash } from 'react-icons/bi';
 import DeleteCart from '@/functions/Delete/DeleteCart';
+import { useRouter } from 'next/navigation';
+import logout from '@/functions/Get/logout';
+import { notifications } from '@mantine/notifications';
+import { BsFillCheckCircleFill } from 'react-icons/bs';
 const mockdata = [
   {
     icon: IconCode,
@@ -101,7 +105,7 @@ function CartProducts({ data, reload }: { data: any; reload: any }) {
   }
 
   useEffect(() => {
-    console.log(value)
+    console.log(value);
     if (value) EditCartItemAmountFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -263,15 +267,18 @@ function CartDrawer({
       <Space h="xs" />
       <Group justify="space-between">
         <Text fw={700}>總共價格:</Text>
-        <Text fw={700} c={"#EE4D2D"} size='xl'>${!Loading ? (
-          CartData?.reduce((accumulator:any, currentValue:any) => {
-            return accumulator + (currentValue.price * currentValue.amount);
-          }, 0)
-        ) : (
-          <Flex justify="center" align="center">
-            <Loader />
-          </Flex>
-        )}</Text>
+        <Text fw={700} c={'#EE4D2D'} size="xl">
+          $
+          {!Loading ? (
+            CartData?.reduce((accumulator: any, currentValue: any) => {
+              return accumulator + currentValue.price * currentValue.amount;
+            }, 0)
+          ) : (
+            <Flex justify="center" align="center">
+              <Loader />
+            </Flex>
+          )}
+        </Text>
       </Group>
       <Space h="xs" />
       <Button fullWidth radius="xs" variant="outline">
@@ -281,9 +288,47 @@ function CartDrawer({
   );
 }
 
-function AvartaOrLogin({ PressiomsData }: { PressiomsData: any }) {
+function AvartaOrLogin() {
+  const [PressiomsData, setPressiomsData] = useState<any>();
+
   const [CartDrawerStatus, { toggle: openCart, close: closeCart }] =
     useDisclosure(false);
+
+  async function fetchPressiomsData() {
+    const response = await getCheckpressioms();
+    setPressiomsData(response.data);
+  }
+
+  useEffect(() => {
+    fetchPressiomsData();
+  }, []);
+
+  const handleOpenWindow = () => {
+    var screen_width = window.screen.width;
+    var screen_height = window.screen.height;
+    var left_position = (screen_width - 640) / 2; // Adjust 600 to the desired window width
+    var top_position = (screen_height - 668) / 2; // Adjust 600 to the desired window height
+    var window_features =
+      'width=640,height=668,left=' + left_position + ',top=' + top_position;
+      const popup = window.open(API_URL + '/oauth/login/google', '_blank', window_features);
+      if(popup){
+        const checkPopup = setInterval(() => {
+          if (popup.window?.location?.href
+             .includes(WEBSITE_URL)) {popup.close()}
+          if (!popup || !popup.closed) return;
+          clearInterval(checkPopup);
+          fetchPressiomsData()
+          notifications.show({
+            color: 'teal',
+            title: '成功登入',
+            message: '你已成功登入該帳號',
+            icon: <BsFillCheckCircleFill />,
+            loading: false,
+            autoClose: 2000,
+          });
+       }, 500);
+      }
+  };
   return (
     <>
       {PressiomsData?.sub ? (
@@ -324,8 +369,21 @@ function AvartaOrLogin({ PressiomsData }: { PressiomsData: any }) {
                   </Menu.Item>
                 </Anchor>
                 <Menu.Divider />
-                <Link href={API_URL + '/oauth/logout'}>
                   <Menu.Item
+                    onClick={() => {
+                      logout()
+                      setTimeout(() => {
+                        fetchPressiomsData()
+                        notifications.show({
+                          color: 'teal',
+                          title: '成功登出',
+                          message: '你已經成功登出，可以放心的離開了~',
+                          icon: <BsFillCheckCircleFill />,
+                          loading: false,
+                          autoClose: 2000,
+                        });
+                      }, 1000);
+                    }}
                     color="red"
                     leftSection={
                       <MdExitToApp
@@ -335,7 +393,6 @@ function AvartaOrLogin({ PressiomsData }: { PressiomsData: any }) {
                   >
                     登出
                   </Menu.Item>
-                </Link>
               </Menu.Dropdown>
             </Menu>
             <ActionIcon
@@ -351,15 +408,14 @@ function AvartaOrLogin({ PressiomsData }: { PressiomsData: any }) {
           </Group>
         </>
       ) : (
-        <Link href={API_URL + '/oauth/login/google'}>
-          <Button
-            leftSection={<CgLogIn size={14} />}
-            variant="gradient"
-            gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
-          >
-            登入/註冊
-          </Button>
-        </Link>
+        <Button
+          onClick={handleOpenWindow}
+          leftSection={<CgLogIn size={14} />}
+          variant="gradient"
+          gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
+        >
+          登入/註冊
+        </Button>
       )}
     </>
   );
@@ -402,10 +458,10 @@ export function HeaderMegaMenu() {
             </Group>
 
             <Group visibleFrom="sm">
-              <AvartaOrLogin PressiomsData={PressiomsData} />
+              <AvartaOrLogin />
             </Group>
             <Group hiddenFrom="sm">
-              <AvartaOrLogin PressiomsData={PressiomsData} />
+              <AvartaOrLogin />
               <Burger
                 opened={drawerOpened}
                 onClick={toggleDrawer}
