@@ -6,6 +6,6 @@ export default async function GetUserCart(){
         const getUserCart_data = await axios.get(API_URL + `/user/cart/cartlist`, {withCredentials: true,})
         return getUserCart_data
     } catch (error : any) {
-        return error.response
+        return error.response 
     }
 }
