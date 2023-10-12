@@ -1,11 +1,16 @@
 /** @type {import('next').NextConfig} */
-const env = process.env.NODE_ENV
-
-const nextConfig = {rewrites: async () => {
+const env = process.env.NODE_ENV;
+const { API_URL } = require('./lib/config');
+const nextConfig = {
+  reactStrictMode: false,
+  rewrites: async () => {
     return [
       {
-        source: "/api/:path*",
-        destination: (env === "development" ? 'https://api-test.nightcat.xyz/api/:path*': 'https://shop-web-api.nightcat.xyz/api/:path*'),
-      }]}}
+        source: '/api/:path*',
+        destination: API_URL + '/:path*',
+      },
+    ];
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
