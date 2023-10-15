@@ -96,19 +96,32 @@ const mockdata = [
   },
 ];
 
-function CartProducts({ data, reload }: { data: any; reload: any }) {
+function CartProducts({
+  data,
+  reload,
+  TotalPrice,
+  setTotalPrice,
+}: {
+  data: any;
+  reload: any;
+  TotalPrice: any;
+  setTotalPrice: any;
+}) {
   const handlersRef = useRef<NumberInputHandlers>(null);
   const [value, setValue] = useState<any>();
+  const [oldvalue, setOldValue] = useState<any>(data.amount);
 
   async function EditCartItemAmountFunction() {
+    setTotalPrice(TotalPrice + (value - oldvalue) * data.price);
+    setOldValue(value);
     await EditCartItemAmount(data.id, value);
   }
 
   useEffect(() => {
-    console.log(value);
     if (value) EditCartItemAmountFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
   return (
     <>
       <Flex justify="flex-start" align="center" direction="row" gap="md">
@@ -174,8 +187,11 @@ function CartProducts({ data, reload }: { data: any; reload: any }) {
                   c={'red'}
                   size="lg"
                   onClick={() => {
-                    reload(data.id);
                     DeleteCart(data.id);
+                    reload(data.id);
+                    setTotalPrice(
+                      TotalPrice - (value ? value : data.amount) * data.price
+                    );
                   }}
                 >
                   <BiTrash c={'red'} size={20}></BiTrash>
@@ -205,6 +221,7 @@ function CartDrawer({
   const [Loading, setLoading] = useState<any>([]);
   const [pageHeight, setPageHeight] = useState(0);
   const [Reload, setReload] = useState();
+  const [TotalPrice, setTotalPrice] = useState();
 
   async function fetchCartDataFunction() {
     const response = await GetUserCart();
@@ -222,12 +239,20 @@ function CartDrawer({
       window.removeEventListener('resize', updatePageHeight);
     };
   }, []);
+
   useEffect(() => {
     fetchCartDataFunction();
   }, [Reload]);
+
   useEffect(() => {
     setLoading(true);
     fetchCartDataFunction();
+    setTotalPrice(
+      CartData?.reduce((accumulator: any, currentValue: any) => {
+        return accumulator + currentValue.price * currentValue.amount;
+      }, 0)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [CartDrawerStatus]);
   return (
     <Drawer
@@ -243,42 +268,38 @@ function CartDrawer({
       padding="md"
       zIndex={1000000}
     >
-      <ScrollArea h={pageHeight - 170} offsetScrollbars>
+      <ScrollArea h={pageHeight - 170} offsetScrollbars type="scroll" scrollbarSize={6} scrollHideDelay={100}>
         <Divider />
         <Space h="xs" />
-        {!Loading ? (
+        {!Loading && TotalPrice ? (
           CartData?.map((data: any) => (
-            <CartProducts data={data} key={data.id} reload={setReload} />
+            <CartProducts
+              data={data}
+              key={data.id}
+              reload={setReload}
+              TotalPrice={TotalPrice}
+              setTotalPrice={setTotalPrice}
+            />
           ))
         ) : (
           <Flex justify="center" align="center">
-            <Loader />
+            <Loader type="bars" />
           </Flex>
         )}
         <Space h="xs" />
-        <Textarea
-          label={<Text fw={700}>訂單備註</Text>}
-          placeholder="輸入您想備註的事情"
-          autosize
-          minRows={2}
-          maxRows={4}
-        />
       </ScrollArea>
       <Space h="xs" />
       <Group justify="space-between">
-        <Text fw={700}>總共價格:</Text>
-        <Text fw={700} c={'#EE4D2D'} size="xl">
-          $
-          {!Loading ? (
-            CartData?.reduce((accumulator: any, currentValue: any) => {
-              return accumulator + currentValue.price * currentValue.amount;
-            }, 0)
-          ) : (
-            <Flex justify="center" align="center">
-              <Loader />
-            </Flex>
-          )}
-        </Text>
+        <Text fw={700}>總共金額:</Text>
+        {!Loading && TotalPrice ? (
+          <Text fw={700} c={'#EE4D2D'} size="xl">
+            ${TotalPrice}
+          </Text>
+        ) : (
+          <Flex justify="center" align="center">
+            <Loader type="dots" />
+          </Flex>
+        )}
       </Group>
       <Space h="xs" />
       <Button fullWidth radius="xs" variant="outline">
@@ -310,24 +331,29 @@ function AvartaOrLogin() {
     var top_position = (screen_height - 668) / 2; // Adjust 600 to the desired window height
     var window_features =
       'width=640,height=668,left=' + left_position + ',top=' + top_position;
-      const popup = window.open(API_URL + '/oauth/login/google', '_blank', window_features);
-      if(popup){
-        const checkPopup = setInterval(() => {
-          if (popup.window?.location?.href
-             .includes(WEBSITE_URL)) {popup.close()}
-          if (!popup || !popup.closed) return;
-          clearInterval(checkPopup);
-          fetchPressiomsData()
-          notifications.show({
-            color: 'teal',
-            title: '成功登入',
-            message: '你已成功登入該帳號',
-            icon: <BsFillCheckCircleFill />,
-            loading: false,
-            autoClose: 2000,
-          });
-       }, 500);
-      }
+    const popup = window.open(
+      API_URL + '/oauth/login/google',
+      '_blank',
+      window_features
+    );
+    if (popup) {
+      const checkPopup = setInterval(() => {
+        if (popup.window?.location?.href.includes(WEBSITE_URL)) {
+          popup.close();
+        }
+        if (!popup || !popup.closed) return;
+        clearInterval(checkPopup);
+        fetchPressiomsData();
+        notifications.show({
+          color: 'teal',
+          title: '成功登入',
+          message: '你已成功登入該帳號',
+          icon: <BsFillCheckCircleFill />,
+          loading: false,
+          autoClose: 2000,
+        });
+      }, 500);
+    }
   };
   return (
     <>
@@ -369,30 +395,28 @@ function AvartaOrLogin() {
                   </Menu.Item>
                 </Anchor>
                 <Menu.Divider />
-                  <Menu.Item
-                    onClick={() => {
-                      logout()
-                      setTimeout(() => {
-                        fetchPressiomsData()
-                        notifications.show({
-                          color: 'teal',
-                          title: '成功登出',
-                          message: '你已經成功登出，可以放心的離開了~',
-                          icon: <BsFillCheckCircleFill />,
-                          loading: false,
-                          autoClose: 2000,
-                        });
-                      }, 1000);
-                    }}
-                    color="red"
-                    leftSection={
-                      <MdExitToApp
-                        style={{ width: rem(14), height: rem(14) }}
-                      />
+                <Menu.Item
+                  onClick={async () => {
+                    const data = await logout();
+                    if (data) {
+                      fetchPressiomsData();
+                      notifications.show({
+                        color: 'teal',
+                        title: '成功登出',
+                        message: '你已經成功登出，可以放心的離開了~',
+                        icon: <BsFillCheckCircleFill />,
+                        loading: false,
+                        autoClose: 2000,
+                      });
                     }
-                  >
-                    登出
-                  </Menu.Item>
+                  }}
+                  color="red"
+                  leftSection={
+                    <MdExitToApp style={{ width: rem(14), height: rem(14) }} />
+                  }
+                >
+                  登出
+                </Menu.Item>
               </Menu.Dropdown>
             </Menu>
             <ActionIcon
