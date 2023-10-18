@@ -41,6 +41,7 @@
     "moment": "^2.29.4",
     "next": "latest",
     "npm": "^10.1.0",
+    "phone": "^3.1.41",
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "^4.11.0"

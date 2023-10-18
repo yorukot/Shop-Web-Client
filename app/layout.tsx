@@ -9,6 +9,7 @@ import '@mantine/tiptap/styles.css';
 import '@mantine/notifications/styles.css';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/carousel/styles.css';
+import '@mantine/dates/styles.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

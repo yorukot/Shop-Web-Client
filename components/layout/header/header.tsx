@@ -222,6 +222,7 @@ function CartDrawer({
   const [pageHeight, setPageHeight] = useState(0);
   const [Reload, setReload] = useState();
   const [TotalPrice, setTotalPrice] = useState();
+  const router = useRouter()
 
   async function fetchCartDataFunction() {
     const response = await GetUserCart();
@@ -268,7 +269,13 @@ function CartDrawer({
       padding="md"
       zIndex={1000000}
     >
-      <ScrollArea h={pageHeight - 170} offsetScrollbars type="scroll" scrollbarSize={6} scrollHideDelay={100}>
+      <ScrollArea
+        h={pageHeight - 170}
+        offsetScrollbars
+        type="scroll"
+        scrollbarSize={6}
+        scrollHideDelay={100}
+      >
         <Divider />
         <Space h="xs" />
         {!Loading && TotalPrice ? (
@@ -288,23 +295,23 @@ function CartDrawer({
         )}
         <Space h="xs" />
       </ScrollArea>
-      <Space h="xs" />
-      <Group justify="space-between">
-        <Text fw={700}>總共金額:</Text>
-        {!Loading && TotalPrice ? (
-          <Text fw={700} c={'#EE4D2D'} size="xl">
-            ${TotalPrice}
-          </Text>
-        ) : (
-          <Flex justify="center" align="center">
-            <Loader type="dots" />
-          </Flex>
-        )}
-      </Group>
-      <Space h="xs" />
-      <Button fullWidth radius="xs" variant="outline">
-        前往結帳
-      </Button>
+        <Space h="xs" />
+        <Group justify="space-between">
+          <Text fw={700}>總共金額:</Text>
+          {!Loading && TotalPrice ? (
+            <Text fw={700} c={'#EE4D2D'} size="xl">
+              ${TotalPrice}
+            </Text>
+          ) : (
+            <Flex justify="center" align="center">
+              <Loader type="dots" />
+            </Flex>
+          )}
+        </Group>
+        <Space h="xs" />
+        <Button fullWidth radius="xs" variant="outline" onClick={() => {closeCart();router.push('/shop/order')}}>
+          前往結帳
+        </Button>
     </Drawer>
   );
 }
