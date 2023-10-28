@@ -222,7 +222,7 @@ function CartDrawer({
   const [pageHeight, setPageHeight] = useState(0);
   const [Reload, setReload] = useState();
   const [TotalPrice, setTotalPrice] = useState();
-  const router = useRouter()
+  const router = useRouter();
 
   async function fetchCartDataFunction() {
     const response = await GetUserCart();
@@ -295,23 +295,31 @@ function CartDrawer({
         )}
         <Space h="xs" />
       </ScrollArea>
-        <Space h="xs" />
-        <Group justify="space-between">
-          <Text fw={700}>總共金額:</Text>
-          {!Loading && TotalPrice ? (
-            <Text fw={700} c={'#EE4D2D'} size="xl">
-              ${TotalPrice}
-            </Text>
-          ) : (
-            <Flex justify="center" align="center">
-              <Loader type="dots" />
-            </Flex>
-          )}
-        </Group>
-        <Space h="xs" />
-        <Button fullWidth radius="xs" variant="outline" onClick={() => {closeCart();router.push('/shop/order')}}>
-          前往結帳
-        </Button>
+      <Space h="xs" />
+      <Group justify="space-between">
+        <Text fw={700}>總共金額:</Text>
+        {!Loading && TotalPrice ? (
+          <Text fw={700} c={'#EE4D2D'} size="xl">
+            ${TotalPrice}
+          </Text>
+        ) : (
+          <Flex justify="center" align="center">
+            <Loader type="dots" />
+          </Flex>
+        )}
+      </Group>
+      <Space h="xs" />
+      <Button
+        fullWidth
+        radius="xs"
+        variant="outline"
+        onClick={() => {
+          closeCart();
+          router.push('/user/order');
+        }}
+      >
+        前往結帳
+      </Button>
     </Drawer>
   );
 }
@@ -380,15 +388,17 @@ function AvartaOrLogin() {
 
               <Menu.Dropdown>
                 <Menu.Label></Menu.Label>
-                <Menu.Item
-                  leftSection={
-                    <MdFormatListBulleted
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  購買紀錄
-                </Menu.Item>
+                <Anchor href={WEBSITE_URL + '/user/orderlist'} underline="never">
+                  <Menu.Item
+                    leftSection={
+                      <MdFormatListBulleted
+                        style={{ width: rem(14), height: rem(14) }}
+                      />
+                    }
+                  >
+                    訂單紀錄
+                  </Menu.Item>
+                </Anchor>
                 <Anchor href={WEBSITE_URL + '/admin'} underline="never">
                   <Menu.Item
                     color="orange"

@@ -10,6 +10,7 @@ import '@mantine/notifications/styles.css';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/carousel/styles.css';
 import '@mantine/dates/styles.css';
+import { ModalsProvider } from '@mantine/modals';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -40,8 +41,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <MantineProvider theme={theme}>
             <HeaderMegaMenu />
+            <ModalsProvider>
           <Notifications />
           {children}
+          </ModalsProvider>
         </MantineProvider>
       </body>
     </html>

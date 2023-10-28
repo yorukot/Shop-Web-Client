@@ -60,7 +60,6 @@ export function ProductsOptionsComponents({ id }: { id: string }) {
       ProductsOptionsImage,
       ProductsOptionsRemaining
     );
-    console.log('test');
     if (CreateNewCategory_data.status !== 201)
       console.error('something went wrong');
     setProductsOptionsName('');

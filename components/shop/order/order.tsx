@@ -103,8 +103,7 @@ export function Order({ userCartData }: { userCartData: any }) {
       Time: (value, values) =>
         values.Transport === '1' ||
         (new Date(value).getHours() > 9 && new Date(value).getHours() < 17)
-          ? values.Transport === '2' &&
-            new Date(value).getDay() === 0 ||
+          ? (values.Transport === '2' && new Date(value).getDay() === 0) ||
             new Date(value).getDay() === 6
             ? '時間不能為禮拜六或日'
             : null
@@ -121,7 +120,7 @@ export function Order({ userCartData }: { userCartData: any }) {
     },
   });
   async function CreateOrderFunction() {
-    setDisplay(true)
+    setDisplay(true);
     const totalPrice = userCartData.reduce(
       (accumulator: any, currentValue: any) => {
         return accumulator + currentValue.price * currentValue.amount;
@@ -140,7 +139,7 @@ export function Order({ userCartData }: { userCartData: any }) {
       new Date(form.values.Time).getTime()
     );
     if (response.status === 201) {
-      router.push('/');
+      router.push('/user/orderlist/' + response.data.id);
     } else {
       return notifications.show({
         color: 'red',
@@ -207,13 +206,16 @@ export function Order({ userCartData }: { userCartData: any }) {
                         minRows={2}
                         maxRows={4}
                       />
+                    </>
+                  ) : (
+                    <>
                       <DatesProvider
                         settings={{ timezone: 'Asia/Taipei', locale: 'zh-tw' }}
                       >
                         <DateTimePicker
                           label={
                             <Text fw={700} c={'#000000'} size="md">
-                              請輸入時間與日期(時間請位於早上8點到下午6點，六日不可運送)
+                              請輸入自取/運送時間與日期(時間請位於早上8點到下午6點，六日不可運送)
                             </Text>
                           }
                           {...form.getInputProps('Time')}
@@ -225,16 +227,15 @@ export function Order({ userCartData }: { userCartData: any }) {
                           maxDate={new Date(OrderMaxTime)}
                         />
                       </DatesProvider>
+                      <Alert
+                        variant="filled"
+                        color="blue"
+                        title="現場取貨注意"
+                        icon={<IconInfoCircle />}
+                      >
+                        {LocalOrderTranspostText}
+                      </Alert>
                     </>
-                  ) : (
-                    <Alert
-                      variant="filled"
-                      color="blue"
-                      title="現場取貨注意"
-                      icon={<IconInfoCircle />}
-                    >
-                      {LocalOrderTranspostText}
-                    </Alert>
                   )}
                   <div>
                     <Text fw={700} c={'#000000'} size="lg">
@@ -311,7 +312,15 @@ export function Order({ userCartData }: { userCartData: any }) {
           </Grid.Col>
         </Grid>
         <Space h="md" />
-        <Button fullWidth radius="xs" variant="outline" leftSection={<BsFillClipboardCheckFill />} type="submit" disabled={Display} size='xl'>
+        <Button
+          fullWidth
+          radius="xs"
+          variant="outline"
+          leftSection={<BsFillClipboardCheckFill />}
+          type="submit"
+          disabled={Display}
+          size="xl"
+        >
           確認下單
         </Button>
       </form>

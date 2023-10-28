@@ -86,7 +86,7 @@ function Card_(element: any) {
 export function ShopList() {
   const [productsData, setproductsData] = useState<any>([]);
   const [categoryListData, setcategoryListData] = useState<any>();
-
+  
   async function fetchCategoryListFunction() {
     const response = await getCategoryList();
     setcategoryListData(response.data.data);

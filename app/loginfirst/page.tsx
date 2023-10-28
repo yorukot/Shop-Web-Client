@@ -1,11 +1,6 @@
 'use client';
-import { use } from 'react';
-import { Container } from '@mantine/core';
-import { ProductsEdit } from '@/components/admin/products/productsEdit/productsEdit';
-import { ProductsPage } from '@/components/shop/products/products';
+import { Container, Space, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import getProductsWithId from '@/functions/Get/GetProductsWithId';
-import getProductsOptions from '@/functions/Get/GetProductsOptions';
 import GetUserCart from '@/functions/Get/GetUserCart';
 import { Order } from '@/components/shop/order/order';
 
@@ -21,11 +16,13 @@ export default function Home() {
     fetchUserCartData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log(UserCartData)
   return (
     <>
       <Container my="md">
-        {UserCartData ? <Order userCartData={UserCartData}></Order> : <></>}
+        <Space></Space>
+        <Text fw={700} c={'#000000'} size="lg">
+          請先進行登入!
+        </Text>
       </Container>
     </>
   );

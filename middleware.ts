@@ -14,8 +14,18 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.next();
     return response
   }
+  if (request.nextUrl.pathname.startsWith('/user')){
+    const url = request.nextUrl;
+    const VerifyPerssiom = await middlewareCheckPressiom(request.headers)
+    if(!VerifyPerssiom.sub){
+        url.pathname = `/loginfirst`;
+        return NextResponse.rewrite(url);
+    }
+    const response = NextResponse.next();
+    return response
+  }
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/admin'],
+  matcher: ['/admin/:path*', '/admin', '/user/:path*', '/user'],
 };
