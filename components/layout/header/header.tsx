@@ -483,18 +483,18 @@ export function HeaderMegaMenu() {
             <MantineLogo size={30} />
 
             <Group h="100%" gap={0} visibleFrom="sm">
-              <a href="#" className={classes.link}>
-                Home
+              <a href="/shop" className={classes.link}>
+                購買商品
               </a>
               <a href="#" className={classes.link}>
-                Features
+                各組介紹
               </a>
 
               <a href="#" className={classes.link}>
-                Learn
+                客戶服務
               </a>
               <a href="#" className={classes.link}>
-                Academy
+                最新消息
               </a>
             </Group>
 
@@ -518,27 +518,24 @@ export function HeaderMegaMenu() {
         onClose={closeDrawer}
         size="100%"
         padding="md"
-        title="Navigation"
+        title="選單"
         hiddenFrom="sm"
         zIndex={1000000}
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-          <a href="#" className={classes.link}>
-            Home
-          </a>
-          <a href="#" className={classes.link}>
-            Features
-          </a>
-          <a href="#" className={classes.link}>
-            Learn
-          </a>
-          <a href="#" className={classes.link}>
-            Academy
-          </a>
-          <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
+        <a href="/shop" className={classes.link}>
+                購買商品
+              </a>
+              <a href="#" className={classes.link}>
+                各組介紹
+              </a>
+
+              <a href="#" className={classes.link}>
+                客戶服務
+              </a>
+              <a href="#" className={classes.link}>
+                最新消息
+              </a>
         </ScrollArea>
       </Drawer>
     </Box>

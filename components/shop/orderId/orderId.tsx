@@ -190,7 +190,7 @@ export function OrderIdPage({
     centered: true,
     confirmProps: { color: 'red' },
     labels: { confirm: '取消訂單', cancel: '取消' },
-    onConfirm: () => console.log('Confirmed'),
+    onConfirm: () => fetchRequestCancel(),
   });
 
   const openDoneConfirmModal = () => modals.openConfirmModal({
