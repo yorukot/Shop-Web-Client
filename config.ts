@@ -5,5 +5,3 @@ export const LocalOrderTranspostText = "請前往xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 export const OrderMinTime = 6 //最早可取貨時間(從下單開始算起幾小時) 單位:小時
 
 export const OrderMaxTime = '2023-12-25 0:00:00Z' //最晚可選取時間
-
-

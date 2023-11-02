@@ -209,7 +209,7 @@ export function OrderIdPage({
   useEffect(() => {
     fetchPressiomsData();
   }, []);
-
+  console.log(OrderData)
   return (
     <>
       <Stack>
@@ -239,6 +239,9 @@ export function OrderIdPage({
         </Text>
         <Text fw={700} c={'#000000'} size="lg">
           電話: {OrderData.phonenumber}
+        </Text>
+        <Text fw={700} c={'#000000'} size="lg">
+          取貨/配送時間: {moment.unix(OrderData.time / 1000).format('YYYY-MM-DD HH:mm:ss')}
         </Text>
         <Text fw={700} c={'#000000'} size="lg">
           創建日期: {moment.unix(OrderData.createAt).format('YYYY-MM-DD HH:mm:ss')}
