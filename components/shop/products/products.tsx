@@ -55,7 +55,7 @@ export function ImageShow({ params }: { params: any }) {
             maxHeight: '100%',
           }}
         />
-      </Box>
+      </Box>                                  
     </Carousel.Slide>
   );
 }
