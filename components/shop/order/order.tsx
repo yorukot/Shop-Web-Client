@@ -101,13 +101,14 @@ export function Order({ userCartData }: { userCartData: any }) {
     validate: {
       admin: (value) => null,
       Time: (value, values) =>
+      !(new Date(value).getTime() - Date.now() < 60 * OrderMinTime * 1000) ?
         values.Transport === '1' ||
         (new Date(value).getHours() > 9 && new Date(value).getHours() < 17)
           ? (values.Transport === '2' && new Date(value).getDay() === 0) ||
             new Date(value).getDay() === 6
             ? '時間不能為禮拜六或日'
             : null
-          : '時間必須是早上九點至下午5點',
+          : '時間必須是早上九點至下午5點' : "時間必須比現在時間晚4小時以上",
       phoneNumber: (value, values) =>
         phone('+886' + value, { country: 'TW' }).isValid || values.admin
           ? null
@@ -138,6 +139,7 @@ export function Order({ userCartData }: { userCartData: any }) {
       form.values.admin,
       new Date(form.values.Time).getTime()
     );
+    console.log(response.status)
     if (response.status === 201) {
       router.push('/user/orderlist/' + response.data.id);
     } else {

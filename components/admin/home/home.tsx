@@ -54,9 +54,11 @@ export function AdminHomePage() {
               </ThemeIcon>
               <Text fw={800}>訂單管理</Text>
             </Group>
+            <Anchor href="/admin/orderlist" underline="never">
             <Button variant="light" color="blue" fullWidth mt="md" radius="md">
               前往訂單管理頁面
             </Button>
+            </Anchor>
           </Card>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>

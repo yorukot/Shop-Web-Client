@@ -20,9 +20,20 @@ import { AiFillStar } from 'react-icons/ai';
 import { BiSearch } from 'react-icons/bi';
 import classes from './shoplist.module.css';
 import getProducts from '@/functions/Get/GetProducts';
+import GetProductRate from '@/functions/Get/GetProductRate';
 
 function Card_(element: any) {
   const data = element.element
+  const [rate, setrate] = useState<any>("");
+
+  async function fetchgetComment() {
+    const response = await GetProductRate(data.id)
+    setrate(response?.data?.data[0].averageValue ? response.data.data[0].averageValue : "");
+  }
+  useEffect(() => {
+    fetchgetComment();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Grid.Col span={{ base: 6, xs: 6, sm: 6, md: 4, lg: 4 }}>
       <Card
@@ -70,11 +81,11 @@ function Card_(element: any) {
           </Text>
           <Group gap="xs">
             <Text size="md" c="#EF8B00" fw={500}>
-              4.5
+              {rate}
             </Text>
             <AiFillStar color="gold"></AiFillStar>
             <Text size="xs" fw={400} c="#6f6f6f">
-              已售出: 10
+              已售出: {data.sell}
             </Text>
           </Group>
         </Group>

@@ -29,6 +29,7 @@ import { notifications } from '@mantine/notifications';
 import { TbError404 } from 'react-icons/tb';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
 import { WEBSITE_URL } from '@/lib/config';
+import GetProductRate from '@/functions/Get/GetProductRate';
 
 export function ImageShow({ params }: { params: any }) {
   return (
@@ -74,6 +75,18 @@ export function ProductsPage({
   const [displayPrice, setdisplayPrice] = useState<any>();
   const [PressiomsData, setPressiomsData] = useState<any>();
   const router = useRouter();
+  
+  const [rate, setrate] = useState<any>(0);
+
+  async function fetchgetComment() {
+    const response = await GetProductRate(id)
+    setrate(response.data.data[0].averageValue ? response.data.data[0].averageValue : "");
+  }
+  useEffect(() => {
+    fetchgetComment();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useDisclosure(false);
   useEffect(() => {
     async function fetchPressiomsData() {
@@ -103,7 +116,9 @@ export function ProductsPage({
         autoClose: 2000,
       });
   }
-
+  let totalRemaing = ProductOptionsData.reduce((accumulator:any, currentValue:any) => {
+    return accumulator + currentValue.remaining;
+  }, 0)
   return (
     <>
       <Space h="xl" />
@@ -151,7 +166,7 @@ export function ProductsPage({
             </Text>
             <Space h="md" />
             <Flex gap="md" justify="flex-start" align="center" direction="row">
-              <Rating value={3.5} fractions={2} readOnly /> (40)
+              <Rating value={rate} fractions={2} readOnly />
             </Flex>
             <Divider />
             <Space h="md" />
@@ -174,6 +189,7 @@ export function ProductsPage({
                   <Chip
                     variant="outline"
                     radius="xs"
+                    disabled={element.remaining === 0 ? true : false}
                     key={element.id}
                     onChange={() => {
                       setdisplayPrice(element.price);
@@ -212,20 +228,8 @@ export function ProductsPage({
               >
                 加入購物車
               </Button>
-              <Button
-                fullWidth
-                size="lg"
-                radius="xs"
-                disabled={
-                  ProductOptionsData?.length > 0 && !SelectOptions
-                    ? true
-                    : false
-                }
-              >
-                立即購買
-              </Button>
               <Text size="sm" fw={500}>
-                剩餘:{showRemaining ? showRemaining : ProductsData.remaining}
+                剩餘:{showRemaining ? showRemaining : totalRemaing = 0 ? ProductsData.remaining : totalRemaing}
               </Text>
             </Stack>
           </>
