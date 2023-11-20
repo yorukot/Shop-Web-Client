@@ -1,8 +1,0 @@
-.card {
-    transition: transform 0.3s ease;
-  
-    @mixin hover {
-      transform: scale(1.05) translateY(-5px);
-    }
-  }
-  
