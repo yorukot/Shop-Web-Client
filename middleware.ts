@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
     if(!VerifyPerssiom.sub){
         url.pathname = `/loginfirst`;
         return NextResponse.rewrite(url);
-    }
+    }           
     const response = NextResponse.next();
     return response
   }
