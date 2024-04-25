@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const env = process.env.NODE_ENV;
 
-const API_URL = (env === "development" ? 'https://my-computer.nightcat.xyz/api': 'https://pccuhort.com')
+const API_URL = (env === "development" ? 'https://my-computer.nightcat.xyz/api': 'https://api.pccuhort.com')
 
 const nextConfig = {
   reactStrictMode: false,
